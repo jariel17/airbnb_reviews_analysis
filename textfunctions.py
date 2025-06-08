@@ -9,14 +9,11 @@ from nltk.corpus import stopwords
 from nltk.corpus import wordnet
 import nltk
 import fasttext
-import spacy
 
 nltk.download('stopwords')
 nltk.download("wordnet")
 nltk.download("omw-1.4")
 nltk.download("punkt")
-
-nlp_spacy = spacy.load("en_core_web_sm", disable=["ner", "parser"])
 
 def get_custom_stopwords():
     stop_words = set(stopwords.words("english"))
@@ -24,6 +21,15 @@ def get_custom_stopwords():
     stop_words.discard("no")
     stop_words.add("'")
     stop_words.add("´")
+    stop_words.add("airbnb")
+    stop_words.add("host")
+    stop_words.add("place")
+    stop_words.add("stay")
+    stop_words.add("room")
+    stop_words.add("definitely")
+    stop_words.add("apartment")
+    stop_words.add("would")
+    stop_words.add("location")
     return stop_words
 
 custom_stopwords = get_custom_stopwords()
@@ -70,21 +76,6 @@ def lemmatize_text(text):
         lemma = lemmatizer.lemmatize(token, wordnet_pos)
         lemmatized_tokens.append(lemma)
     return " ".join(lemmatized_tokens)
-
-def lemmatize_text_spacy_batch(text_series):
-    lemmas = []
-    total = len(text_series)
-    # Definimos tamaño de chunk en 50000 para repartir en varias llamadas a pipe
-    chunk_size = 50000
-    for i in range(0, total, chunk_size):
-        sub_list = text_series.iloc[i : i + chunk_size].tolist()
-        docs = nlp_spacy.pipe(sub_list, batch_size=len(sub_list), n_process=1)
-        lemmas.extend(
-            " ".join([token.lemma_ for token in doc if token.lemma_ != "-PRON-"])
-            for doc in docs
-        )
-    return lemmas
-
 
 modelo = fasttext.load_model("lid.176.bin")
 
