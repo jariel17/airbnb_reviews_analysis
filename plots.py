@@ -4,6 +4,7 @@ import string
 import seaborn as sns
 import matplotlib.pyplot as plt
 from  wordcloud import WordCloud
+import numpy as np
 
 def plot_top_words(df, col, top_n=20, ax=None, title=""):
     # Concatenar todos los textos y tokenizar
@@ -59,10 +60,7 @@ def compare_top_words(df, col1, col2, top_n=20):
     plt.tight_layout()
     plt.show()
 
-
 def plot_wordcloud_from_matrix(tfidf_matrix, feature_names, top_n=100, title="WordCloud", ax=None):
-
-    import numpy as np
     sums = np.asarray(tfidf_matrix.sum(axis=0)).ravel()
 
     idx_sorted = np.argsort(sums)[::-1]
@@ -81,3 +79,15 @@ def plot_wordcloud_from_matrix(tfidf_matrix, feature_names, top_n=100, title="Wo
     ax.imshow(wc, interpolation="bilinear")
     ax.set_title(title, fontsize=16)
     ax.axis("off")
+
+def plot_wordcloud_from_dictionary(words, title, max_words=100, width=600, height=300):
+    wordcloud = WordCloud(width=width, 
+                          height=height, 
+                          background_color='white',
+                          max_words=max_words).generate_from_frequencies(words)
+    
+    plt.figure(figsize=(6, 3))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis("off")
+    plt.title(title, fontsize=20)
+    plt.show()

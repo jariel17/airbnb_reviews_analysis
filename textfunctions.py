@@ -30,6 +30,7 @@ def get_custom_stopwords():
     stop_words.add("apartment")
     stop_words.add("would")
     stop_words.add("location")
+    stop_words.add("mexico")
     return stop_words
 
 custom_stopwords = get_custom_stopwords()
@@ -46,7 +47,7 @@ def clean_text(text):
     # 1.3 Eliminar URLs
     text = re.sub(r"http\S+|www\S+", " ", text)
     
-    # 1.4 Eliminar puntuación - se puede mejorar
+    # 1.4 Eliminar puntuación
     text = text.translate(str.maketrans('', '', string.punctuation))
     
     # 1.5 Eliminar números
@@ -77,12 +78,17 @@ def lemmatize_text(text):
         lemmatized_tokens.append(lemma)
     return " ".join(lemmatized_tokens)
 
-modelo = fasttext.load_model("lid.176.bin")
 
 def remove_stopwords(text):
     tokens = word_tokenize(text)
     filtered = [word for word in tokens if word not in custom_stopwords]
     return " ".join(filtered)
+
+def is_single_word(text):
+        words = text.split()  # Divide el texto en palabras
+        return len(words) == 1 
+
+modelo = fasttext.load_model("lid.176.bin")
 
 def detect_language(texto):
     try:
